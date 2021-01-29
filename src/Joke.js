@@ -5,7 +5,7 @@ import "./Joke.css";
  * 
  *  Props:
  *  - id: joke id 
- *  - vote: fn passed down from the parent
+ *  - vote: fn passed down from the parent TODO: could be better name
  *  - votes: number of votes
  *  - text: string of the joke
  * 

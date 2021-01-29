@@ -36,11 +36,13 @@ function JokeList({ numJokesToGet = 5 }) {
       let seenJokes = new Set();
       try{
         while (jokes.length < numJokesToGet) {
+          // TODO: wrap try around axios
           let res = await axios.get(
             BASE_URL,
             {
               headers: { Accept: "application/json" },
             });
+            // TODO: spreading redundancy
             let { ...joke } = res.data;
             if (!seenJokes.has(joke.id)) {
               seenJokes.add(joke.id);
@@ -62,20 +64,21 @@ function JokeList({ numJokesToGet = 5 }) {
   }, [isLoading, numJokesToGet]);
 
   /* empty joke list, set to loading state, and then call getJokes */
-
+  // TODO: be consistent, named function
   const generateNewJokes = () => {
     setIsLoading(true);
   }
-
+  
   /* change vote for this id by delta (+1 or -1) */
-
+  
+  // TODO: be consistent, named function
   const vote = (id, delta) => {
     const newjokes = jokes.map(joke => joke.id === id ? { ...joke, votes: joke.votes + delta } : joke);
     setJokes(newjokes);
   }
 
   /* render: either loading spinner or list of sorted jokes. */
-
+  // TODO: not needing to spread
   const sortedJokes = [...jokes].sort((a, b) => b.votes - a.votes);
   if (isLoading) {
     return (
@@ -93,7 +96,7 @@ function JokeList({ numJokesToGet = 5 }) {
       >
         Get New Jokes
         </button>
-
+      {/* Note you can spread j */}
       {sortedJokes.map(j => (
         <Joke
           text={j.joke}
