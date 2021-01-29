@@ -34,24 +34,24 @@ function JokeList({ numJokesToGet = 5 }) {
       // load jokes one at a time, adding not-yet-seen jokes
       let jokes = [];
       let seenJokes = new Set();
-      try{
+      try {
         while (jokes.length < numJokesToGet) {
-          // TODO: wrap try around axios
+          // Note: could wrap try and catch around axios request
           let res = await axios.get(
             BASE_URL,
             {
               headers: { Accept: "application/json" },
             });
-            // TODO: spreading redundancy
-            let { ...joke } = res.data;
-            if (!seenJokes.has(joke.id)) {
-              seenJokes.add(joke.id);
-              jokes.push({ ...joke, votes: 0 });
-            } else {
-              console.warn("duplicate found!");
-            }
+            
+          let {...joke } = res.data;
+          if (!seenJokes.has(joke.id)) {
+            seenJokes.add(joke.id);
+            jokes.push({ ...joke, votes: 0 });
+          } else {
+            console.warn("duplicate found!");
           }
-        } catch(err){
+        }
+      } catch (err) {
         console.error(err);
       }
       if (isLoading) {
@@ -64,22 +64,21 @@ function JokeList({ numJokesToGet = 5 }) {
   }, [isLoading, numJokesToGet]);
 
   /* empty joke list, set to loading state, and then call getJokes */
-  // TODO: be consistent, named function
-  const generateNewJokes = () => {
+
+  function generateNewJokes() {
     setIsLoading(true);
   }
-  
+
   /* change vote for this id by delta (+1 or -1) */
-  
-  // TODO: be consistent, named function
-  const vote = (id, delta) => {
+
+  function vote(id, delta) {
     const newjokes = jokes.map(joke => joke.id === id ? { ...joke, votes: joke.votes + delta } : joke);
     setJokes(newjokes);
   }
 
   /* render: either loading spinner or list of sorted jokes. */
-  // TODO: not needing to spread
-  const sortedJokes = [...jokes].sort((a, b) => b.votes - a.votes);
+
+  const sortedJokes = jokes.sort((a, b) => b.votes - a.votes);
   if (isLoading) {
     return (
       <div className="loading">
