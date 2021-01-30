@@ -73,8 +73,23 @@ function JokeList({ numJokesToGet = 5 }) {
   /* change vote for this id by delta (+1 or -1) */
 
   function changeVote(id, delta) {
-    const newjokes = jokes.map(joke => joke.id === id ? { ...joke, votes: joke.votes + delta } : joke);
-    setJokes(newjokes);
+    setJokes(jokes.map(
+      joke => joke.id === id ? { ...joke, votes: joke.votes + delta } : joke)
+    );
+  }
+
+  /* reset votes for jokes showing */
+
+  function resetVotes() {
+    setJokes(jokes.map(
+      joke => ({ ...joke, votes: 0 }))
+    );
+  }
+
+  /* lock a joke so user can keep joke on page when requesting new jokes */
+
+  function lockJoke() {
+    
   }
 
   /* render: either loading spinner or list of sorted jokes. */
@@ -96,14 +111,20 @@ function JokeList({ numJokesToGet = 5 }) {
       >
         Get New Jokes
         </button>
-      {/* Note you can spread j */}
-      {sortedJokes.map(j => (
+      <button
+        className="JokeList-votereset"
+        onClick={resetVotes}
+      >
+        Reset Votes
+        </button>
+      {sortedJokes.map(({ joke, id, votes }) => (
         <Joke
-          text={j.joke}
-          key={j.id}
-          id={j.id}
-          votes={j.votes}
+          text={joke}
+          key={id}
+          id={id}
+          votes={votes}
           changeVote={changeVote}
+          lockJoke={lockJoke}
         />
       ))}
     </div>

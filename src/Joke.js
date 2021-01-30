@@ -8,12 +8,13 @@ import "./Joke.css";
  *  - changeVote: fn passed down from the parent
  *  - votes: number of votes
  *  - text: string of the joke
+ *  - lockJoke: fn passed down from the parent
  * 
  *  JokeList -> Joke
  * 
 */
 
-function Joke({ id, changeVote, votes, text }) {
+function Joke({ id, changeVote, votes, text, lockJoke }) {
   return (
     <div className="Joke">
       <div className="Joke-votearea">
@@ -23,6 +24,10 @@ function Joke({ id, changeVote, votes, text }) {
 
         <button onClick={evt => changeVote(id, -1)}>
           <i className="fas fa-thumbs-down" />
+        </button>
+
+        <button onClick={evt => lockJoke()}>
+          <i className="fas fa-lock" />
         </button>
 
         {votes}
