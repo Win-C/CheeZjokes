@@ -28,27 +28,26 @@ function JokeList({ numJokesToGet = 5 }) {
   // const [jokes, setJokes] = useState([]);
   const [jokes, setJokes] = useLocalStorage("jokes", []);
   const [isLoading, setIsLoading] = useState(true);
-
+  console.log("jokes",jokes);
   /* On mount, retrieve jokes from API */
 
   useEffect(function fetchJokesOnRender() {
     async function fetchJokes() {
       // load jokes one at a time, adding not-yet-seen jokes
-      let jokes = [];
+      let newJokes = [];
       let seenJokes = new Set();
       try {
-        while (jokes.length < numJokesToGet) {
+        while (newJokes.length < numJokesToGet) {
           // Note: could wrap try and catch around axios request
           let res = await axios.get(
             BASE_URL,
             {
               headers: { Accept: "application/json" },
             });
-
           let {...joke } = res.data;
           if (!seenJokes.has(joke.id)) {
             seenJokes.add(joke.id);
-            jokes.push({ ...joke, votes: 0 });
+            newJokes.push({ ...joke, votes: 0 });
           } else {
             console.warn("duplicate found!");
           }
@@ -57,12 +56,12 @@ function JokeList({ numJokesToGet = 5 }) {
         console.error(err);
       }
       if (isLoading) {
-        setJokes(jokes);
-        setIsLoading(false);
+        setJokes(newJokes);
       }
     }
-    fetchJokes();
-
+    if(jokes.length === 0) fetchJokes();
+    else setJokes(jokes);
+    setIsLoading(false);
   }, [isLoading, numJokesToGet]);
 
   /* empty joke list, set to loading state, and then call getJokes */
