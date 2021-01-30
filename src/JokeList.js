@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import React from "react";
 import axios from "axios";
 import Joke from "./Joke";
+import useLocalStorage from "./useLocalStorage";
 import "./JokeList.css";
 
 const BASE_URL = "https://icanhazdadjoke.com";
@@ -24,7 +25,8 @@ const BASE_URL = "https://icanhazdadjoke.com";
  * */
 
 function JokeList({ numJokesToGet = 5 }) {
-  const [jokes, setJokes] = useState([]);
+  // const [jokes, setJokes] = useState([]);
+  const [jokes, setJokes] = useLocalStorage("jokes", []);
   const [isLoading, setIsLoading] = useState(true);
 
   /* On mount, retrieve jokes from API */
@@ -42,7 +44,7 @@ function JokeList({ numJokesToGet = 5 }) {
             {
               headers: { Accept: "application/json" },
             });
-            
+
           let {...joke } = res.data;
           if (!seenJokes.has(joke.id)) {
             seenJokes.add(joke.id);
