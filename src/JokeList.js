@@ -20,15 +20,16 @@ const BASE_URL = "https://icanhazdadjoke.com";
  *        "status": 200
  *      }
  *  - isLoading: Boolean for is loading, default to true
+ *  - isUpdatingJokes: Boolean for updating jokes, default to false
  *
  * App -> JokeList -> Joke
  * */
 
 function JokeList({ numJokesToGet = 5 }) {
-  // const [jokes, setJokes] = useState([]);
   const [jokes, setJokes] = useLocalStorage("jokes", []);
   const [isLoading, setIsLoading] = useState(true);
-  console.log("jokes",jokes);
+  const [isUpdatingJokes, setIsUpdatingJokes] = useState(false);
+
   /* On mount, retrieve jokes from API */
 
   useEffect(function fetchJokesOnRender() {
@@ -44,7 +45,7 @@ function JokeList({ numJokesToGet = 5 }) {
             {
               headers: { Accept: "application/json" },
             });
-          let {...joke } = res.data;
+          let { ...joke } = res.data;
           if (!seenJokes.has(joke.id)) {
             seenJokes.add(joke.id);
             newJokes.push({ ...joke, votes: 0 });
@@ -55,24 +56,23 @@ function JokeList({ numJokesToGet = 5 }) {
       } catch (err) {
         console.error(err);
       }
-      if (isLoading) {
-        setJokes(newJokes);
-      }
+      setJokes(newJokes);
+      setIsUpdatingJokes(false)
     }
-    if(jokes.length === 0) fetchJokes();
-    else setJokes(jokes);
+    if (isUpdatingJokes) fetchJokes();
     setIsLoading(false);
-  }, [isLoading, numJokesToGet]);
+  }, [isLoading, numJokesToGet, isUpdatingJokes, setJokes]);
 
   /* empty joke list, set to loading state, and then call getJokes */
 
   function generateNewJokes() {
+    setIsUpdatingJokes(true);
     setIsLoading(true);
   }
 
   /* change vote for this id by delta (+1 or -1) */
 
-  function vote(id, delta) {
+  function changeVote(id, delta) {
     const newjokes = jokes.map(joke => joke.id === id ? { ...joke, votes: joke.votes + delta } : joke);
     setJokes(newjokes);
   }
@@ -103,7 +103,7 @@ function JokeList({ numJokesToGet = 5 }) {
           key={j.id}
           id={j.id}
           votes={j.votes}
-          vote={vote}
+          changeVote={changeVote}
         />
       ))}
     </div>
